@@ -1,5 +1,22 @@
 import 'package:flutter/material.dart';
 
+const Map<int, Color> color = {
+  50: Color.fromRGBO(251, 113, 104, .1),
+  100: Color.fromRGBO(251, 113, 104, .2),
+  200: Color.fromRGBO(251, 113, 104, .3),
+  300: Color.fromRGBO(251, 113, 104, .4),
+  400: Color.fromRGBO(251, 113, 104, .5),
+  500: Color.fromRGBO(251, 113, 104, .6),
+  600: Color.fromRGBO(251, 113, 104, .7),
+  700: Color.fromRGBO(251, 113, 104, .8),
+  800: Color.fromRGBO(251, 113, 104, .9),
+  900: Color.fromRGBO(251, 113, 104, 1),
+};
+
+class CustomColors {
+  static const primary = MaterialColor(0x00fb7168, color);
+}
+
 void main() {
   runApp(const MyApp());
 }
@@ -22,7 +39,7 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: CustomColors.primary,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
