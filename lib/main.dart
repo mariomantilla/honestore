@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:location/location.dart';
 
 const Map<int, Color> color = {
   50: Color.fromRGBO(251, 113, 104, .1),
@@ -21,6 +23,13 @@ class CustomColors {
 const supabaseUrl = "https://tbhtpkmrwtznqzsjlfmo.supabase.co";
 const supabaseKey =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiaHRwa21yd3R6bnF6c2psZm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTY1MjU1MTUsImV4cCI6MTk3MjEwMTUxNX0.1udAz1lLiqT4bmRF-SZlSNOgng2pCZqwkMAXHb07Ch4';
+
+class LatLng {
+  double lat;
+  double lng;
+
+  LatLng(this.lat, this.lng);
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,48 +87,201 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  Location locationHelper = Location();
+  late Future<PostgrestResponse> shops;
+  LatLng? location;
+  String search = '';
+  int selectedTab = 0;
 
-  // List<String> shops = List<String>.generate(10000, (i) => 'Shop $i');
-
-  void _incrementCounter() {
+  void loadShops() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      String rpc = 'search_shops';
+      Map<String, String> params = {'search': search};
+      if (location != null) {
+        rpc = 'nearby_shops';
+        params['location'] = 'Point(${location?.lat} ${location?.lng})';
+      }
+      shops = Supabase.instance.client.rpc(rpc, params: params).execute();
+    });
+  }
+
+  void getLocation() async {
+    bool serviceEnabled = await locationHelper.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await locationHelper.requestService();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
+
+    PermissionStatus permissionGranted = await locationHelper.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await locationHelper.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    LocationData locationData = await locationHelper.getLocation();
+
+    setState(() {
+      location =
+          LatLng(locationData.latitude ?? 0, locationData.longitude ?? 0);
     });
   }
 
   @override
+  void initState() {
+    super.initState();
+    loadShops();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Future<PostgrestResponse> data =
-        Supabase.instance.client.from('shops').select('*').execute();
     return SafeArea(
         child: Scaffold(
-            body: FutureBuilder(
-                future: data,
-                builder:
-                    (context, AsyncSnapshot<PostgrestResponse> projectSnap) {
-                  if (!projectSnap.hasData) {
-                    return Container();
-                  }
-                  List<dynamic> shops = projectSnap.data?.data;
-                  return ListView.builder(
-                    itemCount: shops.length,
-                    itemBuilder: (context, index) {
-                      dynamic shop = shops[index];
-                      return Card(
-                          child: ListTile(
-                        leading: Image.network(
-                            'https://tbhtpkmrwtznqzsjlfmo.supabase.co/storage/v1/object/public/shops-content/${shop['logo']}.jpg'),
-                        title: Text(shop['name']),
-                        subtitle: Text(shop['description']),
-                      ));
-                    },
-                  );
-                })));
+      /*title: TextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            focusedBorder: OutlineInputBorder(),
+            hintText: 'Buscar tienda',
+          ),
+          onChanged: (String text) {
+            search = text;
+          },
+          onEditingComplete: () {
+            loadShops();
+          },
+        ),*/
+
+      body: IndexedStack(
+        index: selectedTab,
+        children: [
+          Column(
+            children: [
+              Padding(
+                  padding:
+                      EdgeInsets.only(top: 20, left: 15, right: 15, bottom: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            width: 1,
+                            color: Colors.black /*fromRGBO(251, 113, 104, 1)*/),
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Row(children: [
+                      Padding(
+                          padding: EdgeInsets.all(15),
+                          child: Icon(
+                            Icons.search,
+                            color: Colors.black,
+                          )),
+                      Expanded(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            search != '' ? search : 'Buscar tienda...',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.normal),
+                          ),
+                          location != null
+                              ? Text(
+                                  'cerca de mi',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal),
+                                )
+                              : Container(),
+                        ],
+                      )),
+                      Padding(
+                          padding: EdgeInsets.all(15),
+                          child: Icon(Icons.map, color: Colors.black)),
+                    ]),
+                  )),
+              Padding(
+                padding: const EdgeInsets.all(3),
+                child: OutlinedButton(
+                    style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all<Color>(
+                          const Color.fromRGBO(251, 113, 104, 1)),
+                    ),
+                    onPressed: getLocation,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.location_on),
+                        location != null
+                            ? const Text('Actualizar Ubicación')
+                            : const Text('Localizar')
+                      ],
+                    )),
+              ),
+              Expanded(
+                  child: FutureBuilder(
+                      future: shops,
+                      builder: (context,
+                          AsyncSnapshot<PostgrestResponse> projectSnap) {
+                        if (!projectSnap.hasData) {
+                          return Container();
+                        }
+                        if (projectSnap.hasError) {
+                          return Container(
+                              child: Text(projectSnap.error?.toString() ?? ''));
+                        }
+
+                        List<dynamic> shops = projectSnap.data?.data;
+                        return ListView.builder(
+                          itemCount: shops.length,
+                          itemBuilder: (context, index) {
+                            dynamic shop = shops[index];
+                            return Card(
+                                child: ListTile(
+                              leading: Image.network(
+                                  'https://tbhtpkmrwtznqzsjlfmo.supabase.co/storage/v1/object/public/shops-content/${shop['logo']}.jpg'),
+                              title: Text(shop['name']),
+                              subtitle: Text(shop['description']),
+                            ));
+                          },
+                        );
+                      }))
+            ],
+          ),
+          Container(),
+          Container()
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+          currentIndex: selectedTab,
+          onTap: (int i) {
+            setState(() {
+              selectedTab = i;
+            });
+          },
+          selectedItemColor: CustomColors.primary[900],
+          items: [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.explore), label: 'Explorar'),
+            BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favs'),
+            BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: 'Más')
+          ]),
+      /*Padding(
+          padding: EdgeInsets.symmetric(horizontal: 50),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                  child: ),
+              Expanded(
+                  child:
+                      IconButton(onPressed: () {}, icon: Icon(Icons.explore))),
+              Expanded(
+                  child:
+                      IconButton(onPressed: () {}, icon: Icon(Icons.explore)))
+            ],
+          )),*/
+      floatingActionButton: FloatingActionButton(
+          onPressed: loadShops, child: const Icon(Icons.refresh)),
+    ));
   }
 }
