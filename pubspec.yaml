@@ -30,6 +30,9 @@ dependencies:
   flutter:
     sdk: flutter
   supabase_flutter:
+  flutter_map:
+  flutter_map_marker_popup:
+  latlong2: ^0.8.1
   location: ^4.2.0
 
 
