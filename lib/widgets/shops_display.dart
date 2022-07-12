@@ -5,7 +5,6 @@ import 'package:honestore/constants.dart';
 import 'package:honestore/models/shop.dart';
 import 'package:honestore/services/data_service.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_map/flutter_map.dart';
 
 class ShopsDisplay extends StatelessWidget {

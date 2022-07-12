@@ -3,11 +3,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/shop.dart';
 
 class DataService {
-  static const String assetsUrls =
+  static const String assetsUrl =
       'https://tbhtpkmrwtznqzsjlfmo.supabase.co/storage/v1/object/public/shops-content/%uuid%.jpg';
 
   static String getAssetUrl(String uuid) {
-    return assetsUrls.replaceAll("%uuid%", uuid);
+    return assetsUrl.replaceAll("%uuid%", uuid);
   }
 
   static Future<List<Shop>> getShops(search, location) async {
