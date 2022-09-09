@@ -1,25 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:honestore/models/shop.dart';
 import 'package:honestore/services/data_service.dart';
-import 'package:honestore/widgets/search_bar.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '/services/location_services.dart';
-import '/widgets/location_picker.dart';
-import '/constants.dart';
-import '/widgets/bottom_nav_bar.dart';
-import 'models/shop.dart';
-import 'widgets/shops_display.dart';
+import 'constants.dart';
+import 'pages/home_page.dart';
+import 'pages/shop_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await Supabase.initialize(
-      url: supabaseUrl,
-      anonKey: supabaseKey,
-      authCallbackUrlHostname: 'login-callback', // optional
-      debug: true // optional
-      );
+  await DataService.initialise();
   runApp(const MyApp());
 }
 
@@ -33,92 +22,33 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           primarySwatch: CustomMaterialColors.primary,
           iconTheme: IconThemeData(color: CustomMaterialColors.primary[900])),
-      home: const MyHomePage(),
+      initialRoute: '/',
+      onGenerateRoute: (RouteSettings settings) {
+        switch (settings.name) {
+          case ShopPage.routeName:
+            final args = settings.arguments as Shop;
+            return MaterialPageRoute(builder: (context) => ShopPage(args));
+        }
+        return MaterialPageRoute(builder: (context) => const HomePage());
+        // String? route = settings.name;
+        // if (route != null && route != '/') {
+        //   var uri = Uri.parse(route);
+        //   switch (uri.pathSegments.first) {
+        //     case 'shops':
+        //       int? id = int.tryParse(uri.pathSegments[1]);
+        //       if (id != null) {
+        //         return MaterialPageRoute(builder: (context) => ShopPage(id));
+        //       }
+        //   }
+        // }
+        // return MaterialPageRoute(builder: (context) => const HomePage());
+      },
+      /*routes: {
+          // When navigating to the "/" route, build the FirstScreen widget.
+          '/': (context) => const HomePage(),
+          // When navigating to the "/second" route, build the SecondScreen widget.
+          '/shop': (context) => const ShopPage(),
+        }*/
     );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  List<Shop>? shops;
-  LatLng? location;
-  String search = '';
-  int selectedTab = 0;
-  int displayMode = 0;
-
-  void loadShops() async {
-    List<Shop> newShops = await DataService.getShops(search, location);
-    setState(() {
-      shops = newShops;
-    });
-  }
-
-  void getLocation() async {
-    LatLng? newLocation = await LocationService().getLocation();
-    setState(() {
-      location = newLocation;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    loadShops();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-      body: IndexedStack(
-        index: selectedTab,
-        children: [
-          Column(
-            children: [
-              SearchBar(
-                search: search,
-                searchCallback: (String text) {
-                  setState(() {
-                    search = text;
-                  });
-                },
-                viewMode: displayMode,
-                mapCallback: () {
-                  setState(() {
-                    displayMode = displayMode == 0 ? 1 : 0;
-                  });
-                },
-                updateResults: loadShops,
-              ),
-              LocationPicker(
-                callback: getLocation,
-                location: location,
-              ),
-              ShopsDisplay(
-                shops: shops,
-                index: displayMode,
-                location: location,
-              )
-            ],
-          ),
-          Container(),
-          Container()
-        ],
-      ),
-      bottomNavigationBar: BottomNavBar(
-        selectedTab: selectedTab,
-        callback: (int i) {
-          setState(() {
-            selectedTab = i;
-          });
-        },
-      ),
-    ));
   }
 }

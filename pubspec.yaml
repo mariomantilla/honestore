@@ -32,6 +32,7 @@ dependencies:
   supabase_flutter:
   flutter_map:
   flutter_map_marker_popup:
+  url_launcher: ^6.0.9
   latlong2: ^0.8.1
   location: ^4.2.0
 

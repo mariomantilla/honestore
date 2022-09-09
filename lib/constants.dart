@@ -30,3 +30,15 @@ const supabaseKey =
 const double defaultCenterLat = 41.3870154;
 const double defaultCenterLng = 2.1612924;
 const double defaultZoom = 13;
+
+enum SortByOptions { nearBy, newest }
+
+Map sortByIcons = {
+  SortByOptions.nearBy: Icons.radar,
+  SortByOptions.newest: Icons.calendar_month
+};
+
+Map sortByLabels = {
+  SortByOptions.nearBy: 'Más cercanos',
+  SortByOptions.newest: 'Novedades'
+};

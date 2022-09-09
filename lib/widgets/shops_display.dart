@@ -3,6 +3,7 @@ import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:honestore/constants.dart';
 import 'package:honestore/models/shop.dart';
+import 'package:honestore/pages/shop_page.dart';
 import 'package:honestore/services/data_service.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -37,6 +38,10 @@ class ShopsDisplay extends StatelessWidget {
   }
 }
 
+goToShop(context, Shop shop) {
+  Navigator.pushNamed(context, ShopPage.routeName, arguments: shop);
+}
+
 class ListOfShops extends StatelessWidget {
   const ListOfShops({Key? key, required this.shops}) : super(key: key);
 
@@ -48,12 +53,26 @@ class ListOfShops extends StatelessWidget {
       itemCount: shops.length,
       itemBuilder: (context, index) {
         Shop shop = shops[index];
-        return Card(
-            child: ListTile(
-          leading: Image.network(DataService.getAssetUrl(shop.logoUuid)),
-          title: Text(shop.name),
-          subtitle: Text(shop.description),
-        ));
+        return GestureDetector(
+          onTap: () {
+            goToShop(context, shop);
+          },
+          child: Card(
+              child: ListTile(
+            leading: SizedBox(
+              width: 50,
+              height: 50,
+              child: ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(50)),
+                  child: Image.network(
+                    DataService.getAssetUrl(shop.logoUuid),
+                    fit: BoxFit.cover,
+                  )),
+            ),
+            title: Text(shop.name),
+            subtitle: Text(shop.description),
+          )),
+        );
       },
     );
   }
@@ -62,8 +81,10 @@ class ListOfShops extends StatelessWidget {
 class MapOfShops extends StatefulWidget {
   final List<Shop> shops;
   final LatLng? location;
+  final bool showLocation;
 
-  const MapOfShops({Key? key, required this.shops, this.location})
+  const MapOfShops(
+      {Key? key, required this.shops, this.location, this.showLocation = true})
       : super(key: key);
 
   @override
@@ -106,7 +127,7 @@ class _MapOfShopsState extends State<MapOfShops> {
         ),
         MarkerLayerWidget(
             options: MarkerLayerOptions(
-                markers: widget.location != null
+                markers: (widget.location != null && widget.showLocation)
                     ? [
                         Marker(
                             point: widget.location ?? defaultCenter,
@@ -157,11 +178,16 @@ class MarkerPopUp extends StatelessWidget {
     Shop shop = marker.shop;
     return SizedBox(
         width: 300,
-        child: Card(
-            child: ListTile(
-          leading: Image.network(DataService.getAssetUrl(shop.logoUuid)),
-          title: Text(shop.name),
-          subtitle: Text(shop.description),
-        )));
+        child: GestureDetector(
+          onTap: () {
+            goToShop(context, shop);
+          },
+          child: Card(
+              child: ListTile(
+            leading: Image.network(DataService.getAssetUrl(shop.logoUuid)),
+            title: Text(shop.name),
+            subtitle: Text(shop.description),
+          )),
+        ));
   }
 }
