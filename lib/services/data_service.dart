@@ -20,6 +20,34 @@ class DataService {
     return assetsUrl.replaceAll("%uuid%", uuid);
   }
 
+  static addFavourite(User user, Shop shop) {
+    return Supabase.instance.client
+        .from('favourites')
+        .insert({'shop': shop.id, 'user': user.id}).execute();
+  }
+
+  static removeFavourite(User user, Shop shop) {
+    return Supabase.instance.client
+        .from('favourites')
+        .delete(returning: ReturningOption.minimal)
+        .eq('shop', shop.id)
+        .eq('user', user.id)
+        .execute();
+  }
+
+  static Future<List<Shop>> getFavourites(User user) async {
+    PostgrestResponse resp = await Supabase.instance.client
+        .from('shops')
+        .select('*, favourites!inner(user)')
+        .eq('favourites.user', user.id)
+        .execute();
+    if (resp.hasError) print(resp.error);
+    if (resp.data == null) {
+      return [];
+    }
+    return mapShopsFromData(resp.data);
+  }
+
   static Future<List<Shop>> getShops(search, location, sorting) async {
     print('Getting shops');
     String rpc = 'search_shops';
@@ -36,7 +64,11 @@ class DataService {
     if (response.data == null) {
       return [];
     }
-    return response.data.map<Shop>((s) {
+    return mapShopsFromData(response.data);
+  }
+
+  static List<Shop> mapShopsFromData(data) {
+    return data.map<Shop>((s) {
       return Shop.fromRawData(
           id: s['id'],
           name: s['name'],
@@ -44,7 +76,10 @@ class DataService {
           logoUuid: s['logo'],
           web: s['web'],
           instagram: s['instagram'],
-          coordinates: s['location']
+          phone: s['phone'],
+          address: s['address'],
+          email: s['email'],
+          coordinates: s['location_coordinates']
               .split(" ")
               .map<double>((x) => double.parse(x))
               .toList(),

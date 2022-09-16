@@ -8,6 +8,9 @@ class Shop {
   LatLng location;
   String? web;
   String? instagram;
+  String? phone;
+  String? address;
+  String? email;
 
   DateTime createdAt;
   DateTime updatedAt;
@@ -20,6 +23,9 @@ class Shop {
     required this.location,
     this.web,
     this.instagram,
+    this.phone,
+    this.address,
+    this.email,
     required this.updatedAt,
     required this.createdAt,
   });
@@ -31,6 +37,9 @@ class Shop {
     required this.logoUuid,
     this.web,
     this.instagram,
+    this.phone,
+    this.address,
+    this.email,
     required List<double> coordinates,
     required String createdAt,
     required String updatedAt,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:honestore/models/app_state.dart';
 import 'package:honestore/models/shop.dart';
 import 'package:honestore/services/data_service.dart';
+import 'package:provider/provider.dart';
 
 import 'constants.dart';
 import 'pages/home_page.dart';
@@ -9,7 +11,8 @@ import 'pages/shop_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DataService.initialise();
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context) => AppState(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

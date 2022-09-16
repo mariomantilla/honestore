@@ -53,25 +53,33 @@ class ListOfShops extends StatelessWidget {
       itemCount: shops.length,
       itemBuilder: (context, index) {
         Shop shop = shops[index];
-        return GestureDetector(
-          onTap: () {
-            goToShop(context, shop);
-          },
+        return Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
           child: Card(
+            child: InkWell(
+              onTap: () {
+                goToShop(context, shop);
+              },
               child: ListTile(
-            leading: SizedBox(
-              width: 50,
-              height: 50,
-              child: ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(50)),
-                  child: Image.network(
-                    DataService.getAssetUrl(shop.logoUuid),
-                    fit: BoxFit.cover,
-                  )),
+                leading: SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(50)),
+                      child: Image.network(
+                        DataService.getAssetUrl(shop.logoUuid),
+                        fit: BoxFit.cover,
+                      )),
+                ),
+                title: Text(shop.name),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                subtitle: Text(
+                  shop.description,
+                  maxLines: 2,
+                ),
+              ),
             ),
-            title: Text(shop.name),
-            subtitle: Text(shop.description),
-          )),
+          ),
         );
       },
     );
@@ -105,10 +113,32 @@ class _MapOfShopsState extends State<MapOfShops> {
       children: [
         TileLayerWidget(
           options: TileLayerOptions(
-            urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            urlTemplate:
+                'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
             subdomains: ['a', 'b', 'c'],
           ),
         ),
+        MarkerLayerWidget(
+            options: MarkerLayerOptions(
+                markers: (widget.location != null && widget.showLocation)
+                    ? [
+                        Marker(
+                          point: widget.location ?? defaultCenter,
+                          rotate: true,
+                          builder: (_) => const Icon(
+                            Icons.my_location,
+                            size: 28,
+                            color: Colors.blueGrey,
+                            shadows: [
+                              Shadow(
+                                  offset: Offset(0, 0),
+                                  blurRadius: 20.0,
+                                  color: Color(0xffffffff)),
+                            ],
+                          ),
+                        )
+                      ]
+                    : [])),
         PopupMarkerLayerWidget(
           options: PopupMarkerLayerOptions(
             popupController: _popupLayerController,
@@ -125,25 +155,6 @@ class _MapOfShopsState extends State<MapOfShops> {
             },
           ),
         ),
-        MarkerLayerWidget(
-            options: MarkerLayerOptions(
-                markers: (widget.location != null && widget.showLocation)
-                    ? [
-                        Marker(
-                            point: widget.location ?? defaultCenter,
-                            rotate: true,
-                            builder: (_) => const Icon(
-                                  Icons.run_circle_rounded,
-                                  color: Colors.blue,
-                                  shadows: [
-                                    Shadow(
-                                        offset: Offset(1, 1),
-                                        blurRadius: 10.0,
-                                        color: Color(0xffffffff))
-                                  ],
-                                ))
-                      ]
-                    : []))
       ],
     );
   }
@@ -155,12 +166,13 @@ class ShopMarker extends Marker {
           anchorPos: AnchorPos.align(AnchorAlign.top),
           point: LatLng(shop.location.latitude, shop.location.longitude),
           builder: (BuildContext ctx) => const Icon(
-            Icons.shopping_bag_rounded,
+            Icons.location_on,
+            size: 32,
             shadows: [
               Shadow(
                   offset: Offset(1, 1),
                   blurRadius: 10.0,
-                  color: Color(0xffffffff))
+                  color: Color(0x88000000))
             ],
           ),
         );
@@ -186,7 +198,10 @@ class MarkerPopUp extends StatelessWidget {
               child: ListTile(
             leading: Image.network(DataService.getAssetUrl(shop.logoUuid)),
             title: Text(shop.name),
-            subtitle: Text(shop.description),
+            subtitle: Text(
+              shop.description,
+              maxLines: 2,
+            ),
           )),
         ));
   }

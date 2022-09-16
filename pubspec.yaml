@@ -32,6 +32,8 @@ dependencies:
   supabase_flutter:
   flutter_map:
   flutter_map_marker_popup:
+  font_awesome_flutter:
+  provider: ^6.0.3
   url_launcher: ^6.0.9
   latlong2: ^0.8.1
   location: ^4.2.0
