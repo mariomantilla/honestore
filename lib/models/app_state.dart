@@ -40,7 +40,7 @@ class AppState extends ChangeNotifier {
       DataService.removeFavourite(actingUser, shop)
           .then((PostgrestResponse resp) {
         if (!resp.hasError) {
-          favourites.remove(shop);
+          favourites.removeWhere((s) => s.id == shop.id);
           notifyListeners();
         }
       });

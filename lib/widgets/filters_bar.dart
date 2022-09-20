@@ -51,12 +51,9 @@ class FiltersBar extends StatelessWidget {
         builder: (BuildContext context) {
           return SimpleDialog(
             title: const Text('Ordenar por'),
-            children: <Widget>[
-              SortOptionWidget(SortByOptions.nearBy,
-                  selected: sorting == SortByOptions.nearBy),
-              SortOptionWidget(SortByOptions.newest,
-                  selected: sorting == SortByOptions.newest)
-            ],
+            children: SortByOptions.values
+                .map<Widget>((o) => SortOptionWidget(o, selected: sorting == o))
+                .toList(),
           );
         });
     if (newSelection != null) {

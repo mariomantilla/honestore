@@ -5,6 +5,7 @@ import 'package:honestore/pages/search_shops_tab.dart';
 
 import 'package:honestore/widgets/auth_state.dart';
 import 'package:honestore/widgets/bottom_nav_bar.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

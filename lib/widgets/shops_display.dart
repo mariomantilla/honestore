@@ -22,16 +22,18 @@ class ShopsDisplay extends StatelessWidget {
     List<Shop>? shopList = shops;
     return Expanded(
         child: shopList != null
-            ? IndexedStack(
-                index: index,
-                children: [
-                  ListOfShops(shops: shopList),
-                  MapOfShops(
-                    shops: shopList,
-                    location: location,
-                  )
-                ],
-              )
+            ? (shopList.isEmpty
+                ? const Center(child: Text('Ups. Por aquí no hay nada.'))
+                : IndexedStack(
+                    index: index,
+                    children: [
+                      ListOfShops(shops: shopList),
+                      MapOfShops(
+                        shops: shopList,
+                        location: location,
+                      )
+                    ],
+                  ))
             : const Center(
                 child: CircularProgressIndicator(),
               ));

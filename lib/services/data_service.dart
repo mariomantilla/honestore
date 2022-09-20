@@ -20,6 +20,10 @@ class DataService {
     return assetsUrl.replaceAll("%uuid%", uuid);
   }
 
+  static Future<FunctionResponse> deleteUser() {
+    return Supabase.instance.client.functions.invoke('deleteUser');
+  }
+
   static addFavourite(User user, Shop shop) {
     return Supabase.instance.client
         .from('favourites')
@@ -56,6 +60,9 @@ class DataService {
       rpc = 'nearby_shops';
       params['location'] =
           'Point(${location?.latitude} ${location?.longitude})';
+    }
+    if (sorting == SortByOptions.popular) {
+      rpc = 'popular_shops';
     }
     PostgrestFilterBuilder query =
         Supabase.instance.client.rpc(rpc, params: params);

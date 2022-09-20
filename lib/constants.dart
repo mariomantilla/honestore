@@ -31,16 +31,18 @@ const double defaultCenterLat = 41.3870154;
 const double defaultCenterLng = 2.1612924;
 const double defaultZoom = 13;
 
-enum SortByOptions { nearBy, newest }
+enum SortByOptions { nearBy, newest, popular }
 
 Map sortByIcons = {
   SortByOptions.nearBy: Icons.radar,
-  SortByOptions.newest: Icons.calendar_month
+  SortByOptions.newest: Icons.calendar_month,
+  SortByOptions.popular: Icons.favorite
 };
 
 Map sortByLabels = {
   SortByOptions.nearBy: 'Más cercanos',
-  SortByOptions.newest: 'Novedades'
+  SortByOptions.newest: 'Novedades',
+  SortByOptions.popular: 'Populares'
 };
 
 extension ShowSnackBar on BuildContext {

@@ -1,4 +1,4 @@
-package com.example.honestore
+package app.honestore.android
 
 import io.flutter.embedding.android.FlutterActivity
 
