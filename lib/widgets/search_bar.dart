@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:honestore/constants.dart';
 
 class SearchBar extends StatelessWidget {
   const SearchBar(
@@ -26,8 +27,12 @@ class SearchBar extends StatelessWidget {
             border: const OutlineInputBorder(),
             focusedBorder: const OutlineInputBorder(),
             hintText: 'Buscar tienda',
-            prefixIcon: const Icon(Icons.search),
+            prefixIcon: const Icon(
+              Icons.search,
+              color: Colors.grey,
+            ),
             suffixIcon: IconButton(
+                color: CustomColors.primary,
                 onPressed: mapCallback,
                 icon: Icon(viewMode == 0 ? Icons.map : Icons.list))),
         initialValue: search,

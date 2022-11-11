@@ -16,16 +16,19 @@ class SortOptionWidget extends StatelessWidget {
       onPressed: () {
         Navigator.pop(context, option);
       },
-      child: Row(
-        children: [
-          Icon(sortByIcons[option]),
-          const Padding(padding: EdgeInsets.all(5)),
-          Text(
-            sortByLabels[option],
-            style: TextStyle(
-                fontWeight: selected ? FontWeight.bold : FontWeight.normal),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 5),
+        child: Row(
+          children: [
+            Icon(sortByIcons[option]),
+            const Padding(padding: EdgeInsets.all(5)),
+            Text(
+              sortByLabels[option],
+              style: TextStyle(
+                  fontWeight: selected ? FontWeight.bold : FontWeight.normal),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -57,6 +60,9 @@ class FiltersBar extends StatelessWidget {
           );
         });
     if (newSelection != null) {
+      if (newSelection == SortByOptions.nearBy && location == null) {
+        locationCallback();
+      }
       sortingCallback(newSelection);
     }
   }

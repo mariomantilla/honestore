@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:honestore/helpers/url_helper.dart';
 import 'package:honestore/models/app_state.dart';
 import 'package:honestore/services/data_service.dart';
 import 'package:honestore/widgets/tab_title.dart';
+import 'package:honestore/widgets/version.dart';
 import 'package:provider/provider.dart';
 import 'package:honestore/constants.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
@@ -61,7 +64,7 @@ class MoreTab extends StatelessWidget {
                       Navigator.of(context).pop();
                     });
                   },
-                  child: Text('Eliminar')),
+                  child: const Text('Eliminar')),
               ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -78,14 +81,42 @@ class MoreTab extends StatelessWidget {
       children: [
         const TabTitle('Honestore'),
         const Padding(
-          padding: EdgeInsets.only(top: 0, right: 16.0, left: 16, bottom: 16),
-          child: Text('About honestore'),
+          padding: EdgeInsets.only(top: 5, right: 16.0, left: 16, bottom: 16),
+          child: Text(
+            'La comunidad para comprar de forma responsable',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
         ),
         Expanded(
-          child: ListView(children: [
-            MoreTabElement(title: 'Mi Cuenta', forUsers: true),
-            MoreTabElement(title: 'Enviar sugerencias', forUsers: false),
-            MoreTabElement(title: 'Comparte la app', forUsers: false),
+          child: Column(children: [
+            // const MoreTabElement(title: 'Mi Cuenta', forUsers: true),
+            MoreTabElement(
+                title: 'Privacidad',
+                action: openUrlCallback('https://honestore.app/privacy'),
+                forUsers: false),
+            MoreTabElement(
+                title: 'Términos y Condiciones',
+                action: openUrlCallback('https://honestore.app/terms'),
+                forUsers: false),
+            MoreTabElement(
+                title: 'Web',
+                action: openUrlCallback('https://honestore.app/'),
+                forUsers: false),
+            MoreTabElement(
+                title: 'Enviar sugerencias',
+                action: openUrlCallback('https://honestore.app/feedback'),
+                forUsers: false),
+            MoreTabElement(
+                title: 'Añade tu tienda',
+                action: openUrlCallback('https://honestore.app/add_shop'),
+                forUsers: false),
+            MoreTabElement(
+                title: 'Comparte la app',
+                action: () {
+                  Share.share('https://honestore.app/download');
+                },
+                forUsers: false),
             MoreTabElement(
                 title: 'Eliminar Cuenta',
                 action: () {
@@ -108,6 +139,7 @@ class MoreTab extends StatelessWidget {
             }),
           ]),
         ),
+        const VersionLabel()
       ],
     );
   }

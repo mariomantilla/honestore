@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:honestore/helpers/url_helper.dart';
 import 'package:honestore/models/app_state.dart';
+import 'package:honestore/widgets/async_button.dart';
 import 'package:honestore/widgets/validated_field.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
@@ -19,20 +21,22 @@ class _LoginRequiredState extends State<LoginRequired> {
   late final TextEditingController _emailController;
   late final TextEditingController _passController;
 
-  void login() {
-    client.auth
+  Future login() {
+    return client.auth
         .signIn(email: _emailController.text, password: _passController.text)
         .then((value) {
       if (value.user == null) {
-        context.showErrorSnackBar(message: '${value.error?.message}');
+        context.showErrorSnackBar(
+            message: 'Error al iniciar sesión, comprueba tus credenciales');
+        _passController.text = '';
         return;
       }
       Provider.of<AppState>(context, listen: false).loginUser(value.user!);
     });
   }
 
-  void singUp() {
-    client.auth
+  Future signUp() {
+    return client.auth
         .signUp(_emailController.text, _passController.text)
         .then((value) {
       if (value.user == null) {
@@ -109,11 +113,9 @@ class _LoginRequiredState extends State<LoginRequired> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ElevatedButton(
-                  onPressed: singUp, child: const Text('Crear cuenta')),
+              AsyncButton('Crear cuenta', signUp),
               const Padding(padding: EdgeInsets.only(left: 10)),
-              ElevatedButton(
-                  onPressed: login, child: const Text('Iniciar Sesión'))
+              AsyncButton('Iniciar Sesión', login)
             ],
           ),
           Padding(
@@ -141,6 +143,16 @@ class _LoginRequiredState extends State<LoginRequired> {
               Padding(padding: EdgeInsets.only(left: 10)),
               Text('Continuar con Google'),
             ]),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 12.0),
+            child: InkWell(
+              onTap: openUrlCallback('https://honestore.app/privacy'),
+              child: const Text(
+                'Política de Privacidad',
+                style: TextStyle(color: CustomColors.primary),
+              ),
+            ),
           )
         ]);
   }

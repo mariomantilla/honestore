@@ -30,7 +30,7 @@ class _ValidatedFieldState extends State<ValidatedField> {
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         focusedBorder: const OutlineInputBorder(),
-        hintText: 'Email',
+        hintText: widget.label,
         errorText: _emailErrorText,
         prefixIcon: Icon(widget.icon),
       ),

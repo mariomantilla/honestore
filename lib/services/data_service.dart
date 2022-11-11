@@ -74,24 +74,40 @@ class DataService {
     return mapShopsFromData(response.data);
   }
 
+  static Future<Shop?> getShop(id) async {
+    PostgrestResponse response = await Supabase.instance.client
+        .from('shops')
+        .select('*')
+        .eq('id', id)
+        .execute();
+    if (response.data == null) {
+      return null;
+    }
+    return mapShopFromData(response.data[0]);
+  }
+
   static List<Shop> mapShopsFromData(data) {
     return data.map<Shop>((s) {
-      return Shop.fromRawData(
-          id: s['id'],
-          name: s['name'],
-          description: s['description'],
-          logoUuid: s['logo'],
-          web: s['web'],
-          instagram: s['instagram'],
-          phone: s['phone'],
-          address: s['address'],
-          email: s['email'],
-          coordinates: s['location_coordinates']
-              .split(" ")
-              .map<double>((x) => double.parse(x))
-              .toList(),
-          createdAt: s['created_at'],
-          updatedAt: s['updated_at']);
+      return mapShopFromData(s);
     }).toList();
+  }
+
+  static Shop mapShopFromData(data) {
+    return Shop.fromRawData(
+        id: data['id'],
+        name: data['name'],
+        description: data['description'],
+        logoUuid: data['logo'],
+        web: data['web'],
+        instagram: data['instagram'],
+        phone: data['phone'],
+        address: data['address'],
+        email: data['email'],
+        coordinates: data['location_coordinates']
+            .split(" ")
+            .map<double>((x) => double.parse(x))
+            .toList(),
+        createdAt: data['created_at'],
+        updatedAt: data['updated_at']);
   }
 }

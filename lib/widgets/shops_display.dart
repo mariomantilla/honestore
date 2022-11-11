@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
+import 'package:go_router/go_router.dart';
 import 'package:honestore/constants.dart';
 import 'package:honestore/models/shop.dart';
-import 'package:honestore/pages/shop_page.dart';
 import 'package:honestore/services/data_service.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -41,7 +41,7 @@ class ShopsDisplay extends StatelessWidget {
 }
 
 goToShop(context, Shop shop) {
-  Navigator.pushNamed(context, ShopPage.routeName, arguments: shop);
+  GoRouter.of(context).push('/shop/${shop.id}');
 }
 
 class ListOfShops extends StatelessWidget {
@@ -169,7 +169,7 @@ class ShopMarker extends Marker {
           point: LatLng(shop.location.latitude, shop.location.longitude),
           builder: (BuildContext ctx) => const Icon(
             Icons.location_on,
-            size: 32,
+            size: 38,
             shadows: [
               Shadow(
                   offset: Offset(1, 1),

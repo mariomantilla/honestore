@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:honestore/helpers/url_helper.dart';
 import 'package:honestore/models/app_state.dart';
 import 'package:honestore/models/shop.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../constants.dart';
 import '../services/data_service.dart';
@@ -15,12 +17,6 @@ const customDivider = Padding(
     thickness: 1,
   ),
 );
-
-openUrlCallback(url) {
-  return () {
-    launchUrl(Uri.parse(url ?? ''), mode: LaunchMode.externalApplication);
-  };
-}
 
 class Description extends StatelessWidget {
   const Description(this.text, {Key? key}) : super(key: key);
@@ -111,19 +107,55 @@ class DataItem extends StatelessWidget {
 }
 
 class ShopPage extends StatefulWidget {
-  const ShopPage(this.shop, {Key? key}) : super(key: key);
+  const ShopPage(this.id, {Key? key}) : super(key: key);
 
-  final Shop shop;
-  static const routeName = 'shops';
+  final int id;
 
   @override
   State<ShopPage> createState() => ShopPageState();
 }
 
 class ShopPageState extends State<ShopPage> {
+  Shop? currentShop;
+  bool error = false;
+
+  @override
+  void initState() {
+    super.initState();
+    loadShop();
+  }
+
+  void loadShop() async {
+    Shop? shop = await DataService.getShop(widget.id);
+    bool hasError = shop == null ? true : false;
+    setState(() {
+      error = hasError;
+      currentShop = shop;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    Shop shop = widget.shop;
+    Shop? shop = currentShop;
+
+    final homeButton = Navigator.canPop(context)
+        ? null
+        : IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              GoRouter.of(context).go('/');
+            },
+          );
+
+    if (shop == null) {
+      return Scaffold(
+        appBar: AppBar(leading: homeButton),
+        body: Center(
+            child: error
+                ? const Text('Ha ocurrido un error :(')
+                : const CircularProgressIndicator()),
+      );
+    }
 
     List<List> dataItemsConfig = [
       [
@@ -183,6 +215,7 @@ class ShopPageState extends State<ShopPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text(shop.name),
+          leading: homeButton,
           actions: [
             Consumer<AppState>(builder: (context, appState, child) {
               if (appState.user == null) return Container();
@@ -197,7 +230,12 @@ class ShopPageState extends State<ShopPage> {
                     }
                   },
                   icon: Icon(icon));
-            })
+            }),
+            IconButton(
+                onPressed: () {
+                  Share.share('https://honestore.app/s/${shop.id}');
+                },
+                icon: const Icon(Icons.share))
           ],
         ),
         body: SingleChildScrollView(

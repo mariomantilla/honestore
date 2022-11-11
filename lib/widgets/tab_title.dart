@@ -16,8 +16,8 @@ class TabTitle extends StatelessWidget {
             style: const TextStyle(fontSize: 24),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
           child: Divider(),
         )
       ],
