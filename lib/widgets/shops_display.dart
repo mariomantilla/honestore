@@ -7,6 +7,8 @@ import 'package:honestore/models/shop.dart';
 import 'package:honestore/services/data_service.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ShopsDisplay extends StatelessWidget {
   const ShopsDisplay(
@@ -103,10 +105,39 @@ class MapOfShops extends StatefulWidget {
 
 class _MapOfShopsState extends State<MapOfShops> {
   final PopupController _popupLayerController = PopupController();
+  LatLng? defaultCenter;
+
+  Future<void> setDefaultLocation() async {
+    final response = await http.get(Uri.parse('https://ipinfo.io/json'));
+    LatLng defaultLocation;
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      var data = jsonDecode(response.body);
+      List<double> coords =
+          data['loc'].split(",").map<double>((x) => double.parse(x)).toList();
+      defaultLocation = LatLng(coords[0], coords[1]);
+    } else {
+      // If the server did not return a 200 OK response,
+      defaultLocation = LatLng(defaultCenterLat, defaultCenterLng);
+    }
+    setState(() {
+      defaultCenter = defaultLocation;
+    });
+  }
+
+  @override
+  void initState() {
+    setDefaultLocation();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    LatLng defaultCenter = LatLng(defaultCenterLat, defaultCenterLng);
+    if (widget.location == null && defaultCenter == null) {
+      return const CircularProgressIndicator();
+    }
+    // LatLng defaultCenter = LatLng(defaultCenterLat, defaultCenterLng);
     return FlutterMap(
       options: MapOptions(
           center: widget.location ?? defaultCenter,
@@ -122,10 +153,13 @@ class _MapOfShopsState extends State<MapOfShops> {
         ),
         MarkerLayerWidget(
             options: MarkerLayerOptions(
-                markers: (widget.location != null && widget.showLocation)
+                markers: (defaultCenter != null &&
+                        widget.location != null &&
+                        widget.showLocation)
                     ? [
                         Marker(
-                          point: widget.location ?? defaultCenter,
+                          point:
+                              widget.location ?? defaultCenter ?? LatLng(0, 0),
                           rotate: true,
                           builder: (_) => const Icon(
                             Icons.my_location,
