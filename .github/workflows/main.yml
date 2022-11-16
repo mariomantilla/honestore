@@ -17,7 +17,7 @@ jobs:
       id: regex-match
       with:
         text: ${{ github.ref_name }}
-        regex: '^release-(.*)+(.*)$'
+        regex: '^release-(.*)\+(.*)$'
     - uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.3.0'
