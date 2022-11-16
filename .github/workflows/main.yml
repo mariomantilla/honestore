@@ -25,6 +25,6 @@ jobs:
     - run: flutter test
     - run: flutter build appbundle --build-name=${{ steps.regex-match.outputs.group1 }} --build-number=${{ steps.regex-match.outputs.group2 }}
     - name: Add Bundle to artifacts
-    - uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3
       with:
         path: "build/app/outputs/bundle/release/app-release.aab"
