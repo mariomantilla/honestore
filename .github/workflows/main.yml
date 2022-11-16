@@ -20,7 +20,7 @@ jobs:
         regex: '^refs/tags/release-*(.*)+(.*)$'
     - uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.0.5'
+        flutter-version: '3.3.0'
     - run: flutter pub get
     - run: flutter test
     - run: flutter build appbundle --build-name=${{ steps.regex-match.outputs.group1 }} --build-number=${{ steps.regex-match.outputs.group2 }}
