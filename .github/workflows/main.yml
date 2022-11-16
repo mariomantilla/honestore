@@ -16,15 +16,15 @@ jobs:
     - uses: actions-ecosystem/action-regex-match@v2
       id: regex-match
       with:
-        text: ${{ github.GITHUB_REF }}
-        regex: '^refs/tags/release-*(.*)+(.*)$'
+        text: ${{ github.ref_name }}
+        regex: '^release-(.*)+(.*)$'
     - uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.3.0'
     - run: flutter pub get
     - run: flutter test
     - run: flutter build appbundle --build-name=${{ steps.regex-match.outputs.group1 }} --build-number=${{ steps.regex-match.outputs.group2 }}
-    - name: Push APK to Releases
-      uses: ncipollo/release-action@v1
+    - name: Add Bundle to artifacts
+    - uses: actions/upload-artifact@v3
       with:
-        artifacts: "build/app/outputs/bundle/release/app-release.aab"
+        path: "build/app/outputs/bundle/release/app-release.aab"
