@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:honestore/constants.dart';
 import 'package:honestore/models/shop.dart';
+import 'package:honestore/services/analytics_service.dart';
 import 'package:honestore/services/data_service.dart';
 import 'package:honestore/services/location_services.dart';
 import 'package:honestore/widgets/filters_bar.dart';
@@ -61,9 +62,12 @@ class SearchShopsTabState extends State<SearchShopsTab> {
           },
           viewMode: displayMode,
           mapCallback: () {
+            int newMode = displayMode == 0 ? 1 : 0;
             setState(() {
-              displayMode = displayMode == 0 ? 1 : 0;
+              displayMode = newMode;
             });
+            MixpanelManager.instance?.track("Switched search mode",
+                properties: {"newMode": newMode});
           },
           updateResults: loadShops,
         ),

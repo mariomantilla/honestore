@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.honestore.android">
    <application
-        android:label="honestore"
+        android:label="Honestore"
         android:name="${applicationName}"
         android:icon="@mipmap/logo">
         <activity
@@ -26,14 +26,17 @@
             </intent-filter>
             <!-- Deep Links -->
             <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
-            <intent-filter><!-- android:autoVerify="true" -->
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="http"
                     android:host="honestore.app"
-                    android:pathPrefix="/test"
+                 />
+                <data
+                    android:scheme="https"
+                    android:host="honestore.app"
                  />
                 <!-- <data android:scheme="https" /> -->
             </intent-filter>

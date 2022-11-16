@@ -1,0 +1,30 @@
+on: 
+  push:
+    tags:
+      - 'release-*'
+name: Test, Build and Release apk
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-java@v2
+      with:
+        distribution: 'zulu'
+        java-version: '12'
+    - uses: actions-ecosystem/action-regex-match@v2
+        id: regex-match
+        with:
+          text: ${{ github.GITHUB_REF }}
+          regex: '^refs/tags/release-*(.*)+(.*)$'
+    - uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.0.5'
+    - run: flutter pub get
+    - run: flutter test
+    - run: flutter build appbundle --build-name=${{ steps.regex-match.outputs.group1 }} --build-number=${{ steps.regex-match.outputs.group2 }}
+    - name: Push APK to Releases
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "build/app/outputs/bundle/release/app-release.aab"

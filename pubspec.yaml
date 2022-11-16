@@ -1,4 +1,4 @@
-name: Honestore
+name: honestore
 description: La comunidad de los que queremos comprar de forma responsable
 
 # The following line prevents the package from being accidentally published to
@@ -41,6 +41,7 @@ dependencies:
   location: ^4.2.0
   share_plus: ^4.4.0
   package_info_plus: ^1.4.3+1
+  mixpanel_flutter: ^2.0.0
 
 dev_dependencies:
   flutter_test:
