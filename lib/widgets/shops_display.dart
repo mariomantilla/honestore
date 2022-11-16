@@ -144,37 +144,33 @@ class _MapOfShopsState extends State<MapOfShops> {
           zoom: defaultZoom,
           onTap: (_, __) => _popupLayerController.hideAllPopups()),
       children: [
-        TileLayerWidget(
-          options: TileLayerOptions(
-            urlTemplate:
-                'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-            subdomains: ['a', 'b', 'c'],
-          ),
+        TileLayer(
+          urlTemplate:
+              'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+          subdomains: const ['a', 'b', 'c'],
         ),
-        MarkerLayerWidget(
-            options: MarkerLayerOptions(
-                markers: (defaultCenter != null &&
-                        widget.location != null &&
-                        widget.showLocation)
-                    ? [
-                        Marker(
-                          point:
-                              widget.location ?? defaultCenter ?? LatLng(0, 0),
-                          rotate: true,
-                          builder: (_) => const Icon(
-                            Icons.my_location,
-                            size: 28,
-                            color: Colors.blueGrey,
-                            shadows: [
-                              Shadow(
-                                  offset: Offset(0, 0),
-                                  blurRadius: 20.0,
-                                  color: Color(0xffffffff)),
-                            ],
-                          ),
-                        )
-                      ]
-                    : [])),
+        MarkerLayer(
+            markers: (defaultCenter != null &&
+                    widget.location != null &&
+                    widget.showLocation)
+                ? [
+                    Marker(
+                      point: widget.location ?? defaultCenter ?? LatLng(0, 0),
+                      rotate: true,
+                      builder: (_) => const Icon(
+                        Icons.my_location,
+                        size: 28,
+                        color: Colors.blueGrey,
+                        shadows: [
+                          Shadow(
+                              offset: Offset(0, 0),
+                              blurRadius: 20.0,
+                              color: Color(0xffffffff)),
+                        ],
+                      ),
+                    )
+                  ]
+                : []),
         PopupMarkerLayerWidget(
           options: PopupMarkerLayerOptions(
             popupController: _popupLayerController,

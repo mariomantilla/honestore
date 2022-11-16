@@ -27,33 +27,26 @@ class DataService {
   static addFavourite(User user, Shop shop) {
     return Supabase.instance.client
         .from('favourites')
-        .insert({'shop': shop.id, 'user': user.id}).execute();
+        .insert({'shop': shop.id, 'user': user.id});
   }
 
-  static removeFavourite(User user, Shop shop) {
+  static Future removeFavourite(User user, Shop shop) {
     return Supabase.instance.client
         .from('favourites')
-        .delete(returning: ReturningOption.minimal)
+        .delete()
         .eq('shop', shop.id)
-        .eq('user', user.id)
-        .execute();
+        .eq('user', user.id);
   }
 
   static Future<List<Shop>> getFavourites(User user) async {
-    PostgrestResponse resp = await Supabase.instance.client
+    List favourites = await Supabase.instance.client
         .from('shops')
         .select('*, favourites!inner(user)')
-        .eq('favourites.user', user.id)
-        .execute();
-    if (resp.hasError) print(resp.error);
-    if (resp.data == null) {
-      return [];
-    }
-    return mapShopsFromData(resp.data);
+        .eq('favourites.user', user.id);
+    return mapShopsFromData(favourites);
   }
 
   static Future<List<Shop>> getShops(search, location, sorting) async {
-    print('Getting shops');
     String rpc = 'search_shops';
     Map<String, String> params = {'search': search};
     if (location != null && sorting == SortByOptions.nearBy) {
@@ -64,26 +57,17 @@ class DataService {
     if (sorting == SortByOptions.popular) {
       rpc = 'popular_shops';
     }
-    PostgrestFilterBuilder query =
-        Supabase.instance.client.rpc(rpc, params: params);
-
-    PostgrestResponse response = await query.execute();
-    if (response.data == null) {
-      return [];
-    }
-    return mapShopsFromData(response.data);
+    List response = await Supabase.instance.client.rpc(rpc, params: params);
+    return mapShopsFromData(response);
   }
 
   static Future<Shop?> getShop(id) async {
-    PostgrestResponse response = await Supabase.instance.client
-        .from('shops')
-        .select('*')
-        .eq('id', id)
-        .execute();
-    if (response.data == null) {
+    List shops =
+        await Supabase.instance.client.from('shops').select('*').eq('id', id);
+    if (shops.isEmpty) {
       return null;
     }
-    return mapShopFromData(response.data[0]);
+    return mapShopFromData(shops[0]);
   }
 
   static List<Shop> mapShopsFromData(data) {

@@ -23,7 +23,8 @@ class _LoginRequiredState extends State<LoginRequired> {
 
   Future login() {
     return client.auth
-        .signIn(email: _emailController.text, password: _passController.text)
+        .signInWithPassword(
+            email: _emailController.text, password: _passController.text)
         .then((value) {
       if (value.user == null) {
         context.showErrorSnackBar(
@@ -37,10 +38,10 @@ class _LoginRequiredState extends State<LoginRequired> {
 
   Future signUp() {
     return client.auth
-        .signUp(_emailController.text, _passController.text)
+        .signUp(email: _emailController.text, password: _passController.text)
         .then((value) {
       if (value.user == null) {
-        context.showErrorSnackBar(message: '${value.error?.message}');
+        //context.showErrorSnackBar(message: '${value.error?.message}');
         return;
       }
       Provider.of<AppState>(context, listen: false).loginUser(value.user!);
@@ -134,9 +135,8 @@ class _LoginRequiredState extends State<LoginRequired> {
           ),
           ElevatedButton(
             onPressed: () async {
-              await client.auth.signInWithProvider(sb.Provider.google,
-                  options: sb.AuthOptions(
-                      redirectTo: 'app.honestore.android://login-callback'));
+              await client.auth.signInWithOAuth(sb.Provider.google,
+                  redirectTo: 'app.honestore.android://login-callback');
             },
             child: Row(mainAxisSize: MainAxisSize.min, children: const [
               FaIcon(FontAwesomeIcons.google),

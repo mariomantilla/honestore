@@ -3,7 +3,6 @@ import 'package:honestore/pages/favourites_tab.dart';
 import 'package:honestore/pages/more_tab.dart';
 import 'package:honestore/pages/search_shops_tab.dart';
 
-import 'package:honestore/widgets/auth_state.dart';
 import 'package:honestore/widgets/bottom_nav_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,12 +12,11 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends AuthState<HomePage> {
+class _HomePageState extends State<HomePage> {
   int selectedTab = 0;
 
   @override
   void initState() {
-    recoverSupabaseSession();
     super.initState();
   }
 

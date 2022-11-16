@@ -53,16 +53,16 @@ class MoreTab extends StatelessWidget {
             actions: [
               TextButton(
                   onPressed: () {
-                    DataService.deleteUser().then((resp) {
-                      if (resp.error != null) {
-                        context.showErrorSnackBar(
-                            message: resp.error.toString());
-                      } else {
+                    try {
+                      DataService.deleteUser().then((resp) {
                         client.auth.signOut();
                         context.showSnackBar(message: 'Cuenta eliminada');
-                      }
+                        Navigator.of(context).pop();
+                      });
+                    } catch (error) {
+                      context.showErrorSnackBar(message: error.toString());
                       Navigator.of(context).pop();
-                    });
+                    }
                   },
                   child: const Text('Eliminar')),
               ElevatedButton(

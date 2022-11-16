@@ -1,12 +1,38 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:honestore/models/shop.dart';
 import 'package:honestore/services/data_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+final client = Supabase.instance.client;
+
 class AppState extends ChangeNotifier {
+  AppState() {
+    createSubscription();
+  }
+
   /// Internal, private state of the appstate.
   User? user;
   List<Shop> favourites = [];
+  StreamSubscription? _authSubscription;
+
+  void createSubscription() {
+    _authSubscription = client.auth.onAuthStateChange.listen((data) {
+      final User? user = data.session?.user;
+      if (user != null) {
+        loginUser(user);
+      } else {
+        logOut();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
+  }
 
   void loginUser(User newUser) async {
     user = newUser;
@@ -25,11 +51,9 @@ class AppState extends ChangeNotifier {
   void addFavourite(Shop shop) {
     User? actingUser = user;
     if (actingUser != null) {
-      DataService.addFavourite(actingUser, shop).then((PostgrestResponse resp) {
-        if (!resp.hasError) {
-          favourites.add(shop);
-          notifyListeners();
-        }
+      DataService.addFavourite(actingUser, shop).then((dynamic v) {
+        favourites.add(shop);
+        notifyListeners();
       });
     }
   }
@@ -37,12 +61,9 @@ class AppState extends ChangeNotifier {
   void removeFavourite(Shop shop) {
     User? actingUser = user;
     if (actingUser != null) {
-      DataService.removeFavourite(actingUser, shop)
-          .then((PostgrestResponse resp) {
-        if (!resp.hasError) {
-          favourites.removeWhere((s) => s.id == shop.id);
-          notifyListeners();
-        }
+      DataService.removeFavourite(actingUser, shop).then((dynamic v) {
+        favourites.removeWhere((s) => s.id == shop.id);
+        notifyListeners();
       });
     }
   }
