@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.honestore.android">
-   <application
+    <application
         android:label="Honestore"
         android:name="${applicationName}"
         android:icon="@mipmap/logo">
