@@ -22,8 +22,8 @@ platform :android do
   end
 
   desc "Submit a new beta build to Google Play"
-  lane :beta do
-    sh "flutter build appbundle -v"
+  lane :beta do |options|
+    sh "flutter build appbundle --build-name="+options[:name]+" --build-number="+options[:number]
     upload_to_play_store(
       track: 'beta',
       aab: '../build/app/outputs/bundle/release/app-release.aab',
@@ -42,8 +42,8 @@ platform :android do
   end
 
   desc "Submit a new production build to Google Play"
-  lane :production do
-    sh "flutter build appbundle -v"
+  lane :production do |options|
+    sh "flutter build appbundle --build-name="+options[:name]+" --build-number="+options[:number]
     upload_to_play_store(
       track: 'production',
       aab: '../build/app/outputs/bundle/release/app-release.aab',

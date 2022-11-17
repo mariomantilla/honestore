@@ -12,6 +12,14 @@ on:
           - beta
           - promote_to_production
           - production
+      version_name:
+        description: "Version Name"
+        required: true
+        type: string
+      version_number:
+        description: "Version Number"
+        required: true
+        type: number
 
 # Declare default permissions as read only.
 permissions: read-all
@@ -21,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Set up Flutter.
-      - name: Clone Flutter repository with master channel
+      - name: Clone Flutter repository with stable channel
         uses: subosito/flutter-action@dbf1fa04f4d2e52c33185153d06cdb5443aa189d
         with:
           channel: stable
@@ -56,7 +64,7 @@ jobs:
 
       # Build and deploy with Fastlane (by default, to beta track) 🚀.
       # Naturally, promote_to_production only deploys.
-      - run: bundle exec fastlane ${{ github.event.inputs.lane || 'beta' }}
+      - run: bundle exec fastlane ${{ github.event.inputs.lane || 'beta' }} name:${{ github.event.inputs.version_name }} number:${{ github.event.inputs.version_number }}
         env:
           PLAY_STORE_CONFIG_JSON: ${{ secrets.PLAY_STORE_CONFIG_JSON }}
         working-directory: android
