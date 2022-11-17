@@ -41,10 +41,10 @@ jobs:
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
           generateReleaseNotes: true
-      # - name: Calculate version number
-      #   run: readarray -d . -t v <<< "${{ steps.tag_version.outputs.new_version }}";printf -v m '%d%03d%03d' "${v[0]}" "${v[1]}" "${v[2]/$'\n'/""}";echo "VERSION_NUMBER=$(echo $m)" >> $GITHUB_ENV;
-      # - name: Echo version
-      #   run: echo $VERSION_NUMBER
+      - name: Calculate version number
+        run: readarray -d . -t v <<< "${{ steps.tag_version.outputs.new_version }}";printf -v m '%d%03d%03d' "${v[0]}" "${v[1]}" "${v[2]/$'\n'/""}";echo "VERSION_NUMBER=$(echo $m)" >> $GITHUB_ENV;
+      - name: Echo version
+        run: echo $VERSION_NUMBER
       # # Set up Flutter.
       # - name: Clone Flutter repository with stable channel
       #   uses: subosito/flutter-action@dbf1fa04f4d2e52c33185153d06cdb5443aa189d
