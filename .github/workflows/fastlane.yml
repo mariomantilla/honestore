@@ -33,7 +33,7 @@ jobs:
         uses: subosito/flutter-action@dbf1fa04f4d2e52c33185153d06cdb5443aa189d
         with:
           channel: stable
-      - run: flutter doctor -v
+      - run: flutter doctor
 
       # Checkout code and get packages.
       - name: Checkout code
