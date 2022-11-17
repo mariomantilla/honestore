@@ -22,7 +22,6 @@ on:
         type: number
 
 # Declare default permissions as read only.
-permissions: read-all
 
 jobs:
   fastlane-deploy:
