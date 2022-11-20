@@ -10,6 +10,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../services/analytics_service.dart';
+
 class ShopsDisplay extends StatelessWidget {
   const ShopsDisplay(
       {Key? key, required this.shops, required this.index, this.location})
@@ -44,6 +46,7 @@ class ShopsDisplay extends StatelessWidget {
 
 goToShop(context, Shop shop) {
   GoRouter.of(context).push('/shop/${shop.id}');
+  Analytics.t("Open shop page", {"shop_id": shop.id});
 }
 
 class ListOfShops extends StatelessWidget {

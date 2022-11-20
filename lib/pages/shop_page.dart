@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../constants.dart';
+import '../services/analytics_service.dart';
 import '../services/data_service.dart';
 import '../widgets/shops_display.dart';
 
@@ -234,6 +235,7 @@ class ShopPageState extends State<ShopPage> {
             IconButton(
                 onPressed: () {
                   Share.share('https://honestore.app/s/${shop.id}');
+                  Analytics.t("Share shop", {"shop_id": shop.id});
                 },
                 icon: const Icon(Icons.share))
           ],

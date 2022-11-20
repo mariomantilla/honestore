@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:honestore/models/shop.dart';
+import 'package:honestore/services/analytics_service.dart';
 import 'package:honestore/services/data_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -37,6 +38,7 @@ class AppState extends ChangeNotifier {
   void loginUser(User newUser) async {
     user = newUser;
     favourites = await DataService.getFavourites(newUser);
+    Analytics.instance?.identify(newUser.id.toString());
     // This call tells the widgets that are listening to this model to rebuild.
     notifyListeners();
   }
@@ -44,6 +46,7 @@ class AppState extends ChangeNotifier {
   void logOut() {
     user = null;
     favourites = [];
+    Analytics.instance?.reset();
     // This call tells the widgets that are listening to this model to rebuild.
     notifyListeners();
   }
@@ -53,6 +56,7 @@ class AppState extends ChangeNotifier {
     if (actingUser != null) {
       DataService.addFavourite(actingUser, shop).then((dynamic v) {
         favourites.add(shop);
+        Analytics.t("Add to favourites", {"shop_id": shop.id});
         notifyListeners();
       });
     }
@@ -63,6 +67,7 @@ class AppState extends ChangeNotifier {
     if (actingUser != null) {
       DataService.removeFavourite(actingUser, shop).then((dynamic v) {
         favourites.removeWhere((s) => s.id == shop.id);
+        Analytics.t("Remove from favourites", {"shop_id": shop.id});
         notifyListeners();
       });
     }

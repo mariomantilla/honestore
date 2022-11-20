@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import '../constants.dart';
+import '../services/analytics_service.dart';
 import '/widgets/button.dart';
 
 class SortOptionWidget extends StatelessWidget {
@@ -15,6 +16,7 @@ class SortOptionWidget extends StatelessWidget {
     return SimpleDialogOption(
       onPressed: () {
         Navigator.pop(context, option);
+        Analytics.t("Change shops sorting", {"new_sort": sortByLabels[option]});
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 5),

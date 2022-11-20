@@ -13,7 +13,7 @@ import 'pages/shop_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DataService.initialise();
-  await MixpanelManager.init();
+  await Analytics.init();
   runApp(
       ChangeNotifierProvider(create: (context) => AppState(), child: MyApp()));
 }
@@ -49,5 +49,6 @@ class MyApp extends StatelessWidget {
         },
       )
     ],
+    errorBuilder: (context, state) => const HomePage(),
   );
 }

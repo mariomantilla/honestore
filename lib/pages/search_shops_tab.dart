@@ -41,6 +41,7 @@ class SearchShopsTabState extends State<SearchShopsTab> {
       location = newLocation;
     });
     loadShops();
+    Analytics.t("Update location", {"success": newLocation != null});
   }
 
   @override
@@ -59,6 +60,7 @@ class SearchShopsTabState extends State<SearchShopsTab> {
             setState(() {
               search = text;
             });
+            Analytics.t("New search text", {"text": text});
           },
           viewMode: displayMode,
           mapCallback: () {
@@ -66,8 +68,11 @@ class SearchShopsTabState extends State<SearchShopsTab> {
             setState(() {
               displayMode = newMode;
             });
-            MixpanelManager.instance?.track("Switched search mode",
-                properties: {"newMode": newMode});
+            if (newMode == 1) {
+              Analytics.t("Switch to map mode");
+            } else {
+              Analytics.t("Switch to list mode");
+            }
           },
           updateResults: loadShops,
         ),

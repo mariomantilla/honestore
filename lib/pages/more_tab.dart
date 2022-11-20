@@ -10,6 +10,8 @@ import 'package:share_plus/share_plus.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
+import '../services/analytics_service.dart';
+
 final client = sb.Supabase.instance.client;
 
 class MoreTabElement extends StatelessWidget {
@@ -58,6 +60,7 @@ class MoreTab extends StatelessWidget {
                         client.auth.signOut();
                         context.showSnackBar(message: 'Cuenta eliminada');
                         Navigator.of(context).pop();
+                        Analytics.t("Delete account");
                       });
                     } catch (error) {
                       context.showErrorSnackBar(message: error.toString());
@@ -115,6 +118,7 @@ class MoreTab extends StatelessWidget {
                 title: 'Comparte la app',
                 action: () {
                   Share.share('https://honestore.app/download');
+                  Analytics.t("Share app");
                 },
                 forUsers: false),
             MoreTabElement(
@@ -130,6 +134,7 @@ class MoreTab extends StatelessWidget {
                     onPressed: () {
                       client.auth.signOut();
                       context.showSnackBar(message: "Sesión cerrada");
+                      Analytics.t("Log out");
                     },
                     child: const Text('Cerrar Sesión'),
                   ),

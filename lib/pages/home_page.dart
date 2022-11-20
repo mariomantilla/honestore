@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:honestore/pages/favourites_tab.dart';
 import 'package:honestore/pages/more_tab.dart';
 import 'package:honestore/pages/search_shops_tab.dart';
+import 'package:honestore/services/analytics_service.dart';
 
 import 'package:honestore/widgets/bottom_nav_bar.dart';
 
@@ -35,6 +36,7 @@ class _HomePageState extends State<HomePage> {
           callback: (int i) {
             setState(() {
               selectedTab = i;
+              Analytics.t("Tap on tab ${homeTabsLabels[i]}");
             });
           },
         ),

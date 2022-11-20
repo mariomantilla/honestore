@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:honestore/constants.dart';
 
+import '../services/analytics_service.dart';
+
 final client = sb.Supabase.instance.client;
 
 class LoginRequired extends StatefulWidget {
@@ -32,6 +34,7 @@ class _LoginRequiredState extends State<LoginRequired> {
         _passController.text = '';
         return;
       }
+      Analytics.t("Log in");
       Provider.of<AppState>(context, listen: false).loginUser(value.user!);
     });
   }
@@ -44,6 +47,7 @@ class _LoginRequiredState extends State<LoginRequired> {
         //context.showErrorSnackBar(message: '${value.error?.message}');
         return;
       }
+      Analytics.t("Create account");
       Provider.of<AppState>(context, listen: false).loginUser(value.user!);
     });
   }
@@ -137,6 +141,7 @@ class _LoginRequiredState extends State<LoginRequired> {
             onPressed: () async {
               await client.auth.signInWithOAuth(sb.Provider.google,
                   redirectTo: 'app.honestore.android://login-callback');
+              Analytics.t("Continue with Google");
             },
             child: Row(mainAxisSize: MainAxisSize.min, children: const [
               FaIcon(FontAwesomeIcons.google),
