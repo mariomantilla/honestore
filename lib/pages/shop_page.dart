@@ -256,6 +256,7 @@ class ShopPageState extends State<ShopPage> {
                         shops: [shop],
                         location: shop.location,
                         showLocation: false,
+                        showDirections: true,
                       ),
                     )
                   ]),

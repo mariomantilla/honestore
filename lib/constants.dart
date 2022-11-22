@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomColors {
   static const primary = Color(0xfffb7168);
+  static const secondary = Color(0xff521E1E);
 }
 
 MaterialColor toMaterial(Color color) {
@@ -21,6 +22,7 @@ MaterialColor toMaterial(Color color) {
 
 class CustomMaterialColors {
   static final primary = toMaterial(CustomColors.primary);
+  static final secondary = toMaterial(CustomColors.secondary);
 }
 
 const supabaseUrl = "https://tbhtpkmrwtznqzsjlfmo.supabase.co";
@@ -57,6 +59,6 @@ extension ShowSnackBar on BuildContext {
   }
 
   void showErrorSnackBar({required String message}) {
-    showSnackBar(message: message, backgroundColor: Colors.red);
+    showSnackBar(message: message, backgroundColor: CustomColors.secondary);
   }
 }

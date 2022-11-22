@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
 class AsyncButton extends StatefulWidget {
-  const AsyncButton(this.label, this.action, {Key? key}) : super(key: key);
+  const AsyncButton(this.label, this.action, this.success, this.error,
+      {Key? key})
+      : super(key: key);
 
   final Future Function() action;
+  final Function(dynamic) success;
+  final Function(dynamic) error;
   final String label;
 
   @override
@@ -13,15 +17,24 @@ class AsyncButton extends StatefulWidget {
 class _AsyncButtonState extends State<AsyncButton> {
   bool awaiting = false;
 
+  makeAction() async {
+    try {
+      setState(() => awaiting = true);
+      dynamic result = await widget.action();
+      setState(() => awaiting = false);
+      widget.success(result);
+    } catch (error) {
+      setState(() => awaiting = false);
+      widget.error(error);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
         onPressed: () {
           if (!awaiting) {
-            setState(() => awaiting = true);
-            widget.action().then((value) => setState(() {
-                  awaiting = false;
-                }));
+            makeAction();
           }
         },
         child: awaiting

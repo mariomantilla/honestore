@@ -3,6 +3,7 @@ import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:go_router/go_router.dart';
 import 'package:honestore/constants.dart';
+import 'package:honestore/helpers/url_helper.dart';
 import 'package:honestore/models/shop.dart';
 import 'package:honestore/services/data_service.dart';
 import 'package:latlong2/latlong.dart';
@@ -97,9 +98,14 @@ class MapOfShops extends StatefulWidget {
   final List<Shop> shops;
   final LatLng? location;
   final bool showLocation;
+  final bool showDirections;
 
   const MapOfShops(
-      {Key? key, required this.shops, this.location, this.showLocation = true})
+      {Key? key,
+      required this.shops,
+      this.location,
+      this.showLocation = true,
+      this.showDirections = false})
       : super(key: key);
 
   @override
@@ -146,11 +152,18 @@ class _MapOfShopsState extends State<MapOfShops> {
           center: widget.location ?? defaultCenter,
           zoom: defaultZoom,
           onTap: (_, __) => _popupLayerController.hideAllPopups()),
+      nonRotatedChildren: [
+        AttributionWidget.defaultWidget(
+          source: 'OpenStreetMap & CartoDB Inc',
+          onSourceTapped: () {},
+        ),
+      ],
       children: [
         TileLayer(
+          userAgentPackageName: 'app.honestore.android',
           urlTemplate:
-              'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-          subdomains: const ['a', 'b', 'c'],
+              'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
+          subdomains: const ['a', 'b', 'c', 'b'],
         ),
         MarkerLayer(
             markers: (defaultCenter != null &&
@@ -184,6 +197,7 @@ class _MapOfShopsState extends State<MapOfShops> {
               if (marker is ShopMarker) {
                 return MarkerPopUp(
                   marker: marker,
+                  showDirections: widget.showDirections,
                 );
               }
               return Container();
@@ -216,9 +230,12 @@ class ShopMarker extends Marker {
 }
 
 class MarkerPopUp extends StatelessWidget {
-  const MarkerPopUp({Key? key, required this.marker}) : super(key: key);
+  const MarkerPopUp(
+      {Key? key, required this.marker, this.showDirections = false})
+      : super(key: key);
 
   final ShopMarker marker;
+  final bool showDirections;
 
   @override
   Widget build(BuildContext context) {
@@ -237,6 +254,13 @@ class MarkerPopUp extends StatelessWidget {
               shop.description,
               maxLines: 2,
             ),
+            trailing: showDirections
+                ? IconButton(
+                    icon: const Icon(Icons.directions),
+                    onPressed: openUrlCallback(
+                        "http://maps.google.com/maps?daddr=${shop.location.latitude},${shop.location.longitude}"),
+                  )
+                : null,
           )),
         ));
   }
