@@ -26,6 +26,9 @@ class SearchShopsTabState extends State<SearchShopsTab> {
   int displayMode = 0;
 
   void loadShops() async {
+    setState(() {
+      shops = null;
+    });
     List<Shop> newShops = await DataService.getShops(search, location, sorting);
     setState(() {
       shops = newShops;

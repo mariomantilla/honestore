@@ -1,4 +1,5 @@
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:is_firebase_test_lab_activated/is_firebase_test_lab_activated.dart';
 
 class Analytics {
   static Mixpanel? instance;
@@ -7,6 +8,11 @@ class Analytics {
     instance ??= await Mixpanel.init("09a8489cc7aa57b32a5a31d6e0740db8",
         optOutTrackingDefault: false, trackAutomaticEvents: true);
     instance?.setServerURL("https://api-eu.mixpanel.com");
+    final bool isFirebaseTestLabActivated =
+        await IsFirebaseTestLabActivated.isFirebaseTestLabActivated;
+    if (isFirebaseTestLabActivated) {
+      instance?.registerSuperProperties({'FirebaseTest': true});
+    }
     // instance?.setLoggingEnabled(true);
     return instance!;
   }

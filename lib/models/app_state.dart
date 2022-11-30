@@ -39,6 +39,7 @@ class AppState extends ChangeNotifier {
     user = newUser;
     favourites = await DataService.getFavourites(newUser);
     Analytics.instance?.identify(newUser.id.toString());
+    Analytics.instance?.getPeople().set("Email", user?.email);
     // This call tells the widgets that are listening to this model to rebuild.
     notifyListeners();
   }
