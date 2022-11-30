@@ -60,7 +60,6 @@ class SearchShopsTabState extends State<SearchShopsTab> {
             setState(() {
               search = text;
             });
-            Analytics.t("New search text", {"text": text});
           },
           viewMode: displayMode,
           mapCallback: () {
@@ -74,7 +73,10 @@ class SearchShopsTabState extends State<SearchShopsTab> {
               Analytics.t("Switch to list mode");
             }
           },
-          updateResults: loadShops,
+          updateResults: () {
+            loadShops();
+            Analytics.t("New search text", {"text": search});
+          },
         ),
         FiltersBar(
             locationCallback: getLocation,

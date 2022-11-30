@@ -19,11 +19,13 @@ class ErrorService {
   }
 
   static String translate(String errorMsg) {
-    print(errorMsg);
+    debugPrint(errorMsg);
     return translations[errorMsg] ?? 'Se ha producido un error';
   }
 
-  static void show(BuildContext context, String msg) {
-    context.showErrorSnackBar(message: msg);
+  static void show(BuildContext? context, String msg) {
+    if (context != null) {
+      context.showErrorSnackBar(message: msg);
+    }
   }
 }

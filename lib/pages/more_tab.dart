@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:honestore/helpers/url_helper.dart';
 import 'package:honestore/models/app_state.dart';
 import 'package:honestore/services/data_service.dart';
-import 'package:honestore/widgets/tab_title.dart';
 import 'package:honestore/widgets/version.dart';
 import 'package:provider/provider.dart';
 import 'package:honestore/constants.dart';
@@ -16,9 +15,14 @@ final client = sb.Supabase.instance.client;
 
 class MoreTabElement extends StatelessWidget {
   const MoreTabElement(
-      {required this.title, this.action, this.forUsers = false, Key? key})
+      {required this.title,
+      this.icon,
+      this.action,
+      this.forUsers = false,
+      Key? key})
       : super(key: key);
 
+  final IconData? icon;
   final String title;
   final void Function()? action;
   final bool forUsers;
@@ -26,6 +30,8 @@ class MoreTabElement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget tile = ListTile(
+      leading: icon != null ? Icon(icon) : null,
+      horizontalTitleGap: 0,
       visualDensity: const VisualDensity(vertical: -4),
       title: Text(title),
       onTap: action,
@@ -80,72 +86,78 @@ class MoreTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const TabTitle('Honestore'),
-        const Padding(
-          padding: EdgeInsets.only(top: 5, right: 16.0, left: 16, bottom: 16),
-          child: Text(
-            'La comunidad para comprar de forma responsable',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            textAlign: TextAlign.center,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Padding(
+              padding: const EdgeInsets.all(32),
+              child: Image.asset('assets/images/banner-inverted.png')),
+          const Padding(
+            padding: EdgeInsets.only(top: 5, right: 16.0, left: 16, bottom: 16),
+            child: Text(
+              'La comunidad para comprar de forma responsable',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
           ),
-        ),
-        Expanded(
-          child: Column(children: [
-            // const MoreTabElement(title: 'Mi Cuenta', forUsers: true),
-            MoreTabElement(
-                title: 'Privacidad',
-                action: openUrlCallback('https://honestore.app/privacy'),
-                forUsers: false),
-            MoreTabElement(
-                title: 'Términos y Condiciones',
-                action: openUrlCallback('https://honestore.app/terms'),
-                forUsers: false),
-            MoreTabElement(
-                title: 'Web',
-                action: openUrlCallback('https://honestore.app/'),
-                forUsers: false),
-            MoreTabElement(
-                title: 'Enviar sugerencias',
-                action: openUrlCallback('https://honestore.app/feedback'),
-                forUsers: false),
-            MoreTabElement(
-                title: 'Añade tu tienda',
-                action: openUrlCallback('https://honestore.app/add_shop'),
-                forUsers: false),
-            MoreTabElement(
-                title: 'Comparte la app',
-                action: () {
-                  Share.share('https://honestore.app/download');
-                  Analytics.t("Share app");
-                },
-                forUsers: false),
-            MoreTabElement(
-                title: 'Eliminar Cuenta',
-                action: () {
-                  _askDeleteConfirmation(context);
-                },
-                forUsers: true),
-            Consumer<AppState>(builder: (context, appState, child) {
-              if (appState.user != null) {
-                return Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      client.auth.signOut();
-                      context.showSnackBar(message: "Sesión cerrada");
-                      Analytics.t("Log out");
-                    },
-                    child: const Text('Cerrar Sesión'),
-                  ),
-                );
-              }
-              return Container();
-            }),
-          ]),
-        ),
-        const VersionLabel()
-      ],
+          // const MoreTabElement(title: 'Mi Cuenta', forUsers: true),
+          MoreTabElement(
+              title: 'Privacidad',
+              icon: Icons.privacy_tip,
+              action: openUrlCallback('https://honestore.app/privacy'),
+              forUsers: false),
+          MoreTabElement(
+              title: 'Términos y Condiciones',
+              icon: Icons.topic,
+              action: openUrlCallback('https://honestore.app/terms'),
+              forUsers: false),
+          MoreTabElement(
+              title: 'Web',
+              icon: Icons.web,
+              action: openUrlCallback('https://honestore.app/'),
+              forUsers: false),
+          MoreTabElement(
+              title: 'Enviar sugerencias',
+              icon: Icons.add_comment,
+              action: openUrlCallback('https://honestore.app/feedback'),
+              forUsers: false),
+          MoreTabElement(
+              title: 'Añade tu tienda',
+              icon: Icons.add_business,
+              action: openUrlCallback('https://honestore.app/add_shop'),
+              forUsers: false),
+          MoreTabElement(
+              title: 'Comparte la app',
+              icon: Icons.share,
+              action: () {
+                Share.share('https://honestore.app/download');
+                Analytics.t("Share app");
+              },
+              forUsers: false),
+          MoreTabElement(
+              title: 'Eliminar Cuenta',
+              icon: Icons.delete_outline,
+              action: () {
+                _askDeleteConfirmation(context);
+              },
+              forUsers: true),
+          Consumer<AppState>(builder: (context, appState, child) {
+            return Center(
+              child: appState.user != null
+                  ? ElevatedButton(
+                      onPressed: () {
+                        client.auth.signOut();
+                        context.showSnackBar(message: "Sesión cerrada");
+                        Analytics.t("Log out");
+                      },
+                      child: const Text('Cerrar Sesión'),
+                    )
+                  : Container(),
+            );
+          }),
+          const VersionLabel()
+        ],
+      ),
     );
   }
 }
