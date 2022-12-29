@@ -5,6 +5,7 @@ import '../constants.dart';
 const Map<int, String> homeTabsLabels = {
   0: 'Explorar',
   1: 'Favs',
+  // 2: 'Artículos',
   2: 'Más',
 };
 
@@ -22,11 +23,14 @@ class BottomNavBar extends StatelessWidget {
         currentIndex: selectedTab,
         onTap: callback,
         selectedItemColor: CustomMaterialColors.primary[900],
+        unselectedItemColor: Colors.black54,
         items: [
           BottomNavigationBarItem(
               icon: const Icon(Icons.explore), label: homeTabsLabels[0]),
           BottomNavigationBarItem(
               icon: const Icon(Icons.favorite), label: homeTabsLabels[1]),
+          // BottomNavigationBarItem(
+          //     icon: const Icon(Icons.menu_book), label: homeTabsLabels[2]),
           BottomNavigationBarItem(
               icon: const Icon(Icons.more_horiz), label: homeTabsLabels[2])
         ]);

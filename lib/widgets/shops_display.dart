@@ -76,11 +76,15 @@ class ListOfShops extends StatelessWidget {
                       borderRadius: const BorderRadius.all(Radius.circular(50)),
                       child: Image.network(
                         DataService.getAssetUrl(shop.logoUuid),
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                       )),
                 ),
                 title: Text(shop.name),
-                trailing: const Icon(Icons.arrow_forward_ios),
+                trailing: Icon(
+                  shop.online ? Icons.cloud : Icons.storefront,
+                  size: 18,
+                  color: Colors.black,
+                ),
                 subtitle: Text(
                   shop.description,
                   maxLines: 2,
@@ -162,7 +166,7 @@ class _MapOfShopsState extends State<MapOfShops> {
         TileLayer(
           userAgentPackageName: 'app.honestore.android',
           urlTemplate:
-              'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
+              'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
           subdomains: const ['a', 'b', 'c', 'b'],
         ),
         MarkerLayer(

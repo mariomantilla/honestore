@@ -11,6 +11,7 @@ class Shop {
   String? phone;
   String? address;
   String? email;
+  bool online;
 
   DateTime createdAt;
   DateTime updatedAt;
@@ -26,6 +27,7 @@ class Shop {
     this.phone,
     this.address,
     this.email,
+    required this.online,
     required this.updatedAt,
     required this.createdAt,
   });
@@ -40,6 +42,7 @@ class Shop {
     this.phone,
     this.address,
     this.email,
+    required this.online,
     required List<double> coordinates,
     required String createdAt,
     required String updatedAt,

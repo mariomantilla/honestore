@@ -27,7 +27,7 @@ class Description extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 20.0, left: 20),
+      padding: const EdgeInsets.only(right: 20.0, left: 20, top: 10),
       child: Text(
         text,
         style: const TextStyle(fontSize: 18),
@@ -213,6 +213,20 @@ class ShopPageState extends State<ShopPage> {
       dataItems += [customDivider];
     }
 
+    if (!shop.online) {
+      dataItems += [
+        SizedBox(
+          height: 400,
+          child: MapOfShops(
+            shops: [shop],
+            location: shop.location,
+            showLocation: false,
+            showDirections: true,
+          ),
+        )
+      ];
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: Text(shop.name),
@@ -245,21 +259,24 @@ class ShopPageState extends State<ShopPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                     Logo(shop.logoUuid),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 2),
+                      child: Center(
+                        child: Text(
+                          shop.name,
+                          style: const TextStyle(fontSize: 24),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    shop.online
+                        ? const Center(child: Chip(label: Text('Solo online')))
+                        : Container(),
                     Description(shop.description),
                     customDivider
                   ] +
-                  dataItems +
-                  [
-                    SizedBox(
-                      height: 400,
-                      child: MapOfShops(
-                        shops: [shop],
-                        location: shop.location,
-                        showLocation: false,
-                        showDirections: true,
-                      ),
-                    )
-                  ]),
+                  dataItems),
         ));
   }
 }

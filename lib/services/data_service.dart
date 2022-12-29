@@ -1,3 +1,4 @@
+import 'package:honestore/models/article.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../constants.dart';
@@ -46,6 +47,13 @@ class DataService {
     return mapShopsFromData(favourites);
   }
 
+  static Future<List<Article>> getArticles() async {
+    List articles = await Supabase.instance.client
+        .from('articles')
+        .select('*, author(name)');
+    return mapArticlesFromData(articles);
+  }
+
   static Future<List<Shop>> getShops(search, location, sorting) async {
     String rpc = 'search_shops';
     Map<String, String> params = {'search': search};
@@ -87,10 +95,27 @@ class DataService {
         phone: data['phone'],
         address: data['address'],
         email: data['email'],
+        online: data['online'],
         coordinates: data['location_coordinates']
             .split(" ")
             .map<double>((x) => double.parse(x))
             .toList(),
+        createdAt: data['created_at'],
+        updatedAt: data['updated_at']);
+  }
+
+  static List<Article> mapArticlesFromData(data) {
+    return data.map<Article>((s) {
+      return mapArticleFromData(s);
+    }).toList();
+  }
+
+  static Article mapArticleFromData(data) {
+    return Article.fromRawData(
+        id: data['id'],
+        title: data['title'],
+        body: data['body'],
+        authorName: data['author']['name'] ?? '',
         createdAt: data['created_at'],
         updatedAt: data['updated_at']);
   }

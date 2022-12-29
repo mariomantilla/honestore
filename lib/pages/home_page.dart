@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:honestore/pages/articles_tab.dart';
 import 'package:honestore/pages/favourites_tab.dart';
 import 'package:honestore/pages/more_tab.dart';
 import 'package:honestore/pages/search_shops_tab.dart';
@@ -114,7 +115,12 @@ class _HomePageState extends State<HomePage> {
         key: _scaffoldKey,
         body: IndexedStack(
           index: selectedTab,
-          children: const [SearchShopsTab(), FavouritesTab(), MoreTab()],
+          children: const [
+            SearchShopsTab(),
+            FavouritesTab(),
+            // ArticlesTab(),
+            MoreTab()
+          ],
         ),
         bottomNavigationBar: BottomNavBar(
           selectedTab: selectedTab,
