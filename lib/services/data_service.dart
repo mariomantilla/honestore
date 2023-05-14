@@ -6,7 +6,7 @@ import '../models/shop.dart';
 
 class DataService {
   static const String assetsUrl =
-      'https://tbhtpkmrwtznqzsjlfmo.supabase.co/storage/v1/object/public/shops-content/%uuid%.jpg';
+      'https://ik.imagekit.io/honestore/shops/%path%';
 
   static Future<void> initialise() async {
     await Supabase.initialize(
@@ -17,8 +17,8 @@ class DataService {
         );
   }
 
-  static String getAssetUrl(String uuid) {
-    return assetsUrl.replaceAll("%uuid%", uuid);
+  static String getAssetUrl(String path) {
+    return assetsUrl.replaceAll("%path%", path);
   }
 
   static Future<FunctionResponse> deleteUser() {
@@ -89,7 +89,7 @@ class DataService {
         id: data['id'],
         name: data['name'],
         description: data['description'],
-        logoUuid: data['logo'],
+        logoUuid: data['logo_path'],
         web: data['web'],
         instagram: data['instagram'],
         phone: data['phone'],

@@ -40,7 +40,7 @@ dependencies:
   latlong2: ^0.8.1
   location: ^4.2.0
   share_plus: ^4.4.0
-  package_info_plus: ^1.4.3+1
+  package_info_plus: ^4.0.0
   mixpanel_flutter: ^2.0.0
   in_app_update: ^4.0.1
   is_firebase_test_lab_activated: ^2.0.0

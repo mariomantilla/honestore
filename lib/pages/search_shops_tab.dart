@@ -5,7 +5,7 @@ import 'package:honestore/services/analytics_service.dart';
 import 'package:honestore/services/data_service.dart';
 import 'package:honestore/services/location_services.dart';
 import 'package:honestore/widgets/filters_bar.dart';
-import 'package:honestore/widgets/search_bar.dart';
+import 'package:honestore/widgets/search_bar.dart' as search_bar;
 import 'package:honestore/widgets/shops_display.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -57,7 +57,7 @@ class SearchShopsTabState extends State<SearchShopsTab> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SearchBar(
+        search_bar.SearchBar(
           search: search,
           searchCallback: (String text) {
             setState(() {
